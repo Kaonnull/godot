@@ -289,7 +289,7 @@ void ParticlesMaterial::_update_shader() {
 		code += "	ivec2 emission_tex_ofs = ivec2(point % emission_tex_size.x, point / emission_tex_size.x);\n";
 	}
 	code += "	bool restart = false;\n";
-	code += "	if (CUSTOM.y > CUSTOM.w) {\n";
+	code += "	if (CUSTOM.y > 1.0) {\n";
 	code += "		restart = true;\n";
 	code += "	}\n\n";
 	code += "	if (RESTART || restart) {\n";
@@ -378,7 +378,7 @@ void ParticlesMaterial::_update_shader() {
 
 	code += "	} else {\n";
 
-	code += "		CUSTOM.y += DELTA / LIFETIME;\n";
+	code += "		CUSTOM.y += DELTA / CUSTOM.w;\n";
 	if (tex_parameters[PARAM_INITIAL_LINEAR_VELOCITY].is_valid())
 		code += "		float tex_linear_velocity = textureLod(linear_velocity_texture, vec2(CUSTOM.y, 0.0), 0.0).r;\n";
 	else
@@ -479,7 +479,7 @@ void ParticlesMaterial::_update_shader() {
 	code += "			}\n";
 	code += "		}\n";
 	code += "		float base_angle = (initial_angle + tex_angle) * mix(1.0, angle_rand, initial_angle_random);\n";
-	code += "		base_angle += CUSTOM.y * LIFETIME * (angular_velocity + tex_angular_velocity) * mix(1.0, rand_from_seed(alt_seed) * 2.0 - 1.0, angular_velocity_random);\n";
+	code += "		base_angle += CUSTOM.y * CUSTOM.w * (angular_velocity + tex_angular_velocity) * mix(1.0, rand_from_seed(alt_seed) * 2.0 - 1.0, angular_velocity_random);\n";
 	code += "		CUSTOM.x = base_angle * degree_to_rad;\n"; // angle
 	code += "		CUSTOM.z = (anim_offset + tex_anim_offset) * mix(1.0, anim_offset_rand, anim_offset_random) + CUSTOM.y * (anim_speed + tex_anim_speed) * mix(1.0, rand_from_seed(alt_seed), anim_speed_random);\n"; // angle
 	code += "	}\n";
@@ -584,7 +584,7 @@ void ParticlesMaterial::_update_shader() {
 		code += "	VELOCITY.z = 0.0;\n";
 		code += "	TRANSFORM[3].z = 0.0;\n";
 	}
-	code += "	if (CUSTOM.y > CUSTOM.w) {";
+	code += "	if (CUSTOM.y > 1.0) {";
 	code += "		ACTIVE = false;\n";
 	code += "	}\n";
 	code += "}\n";
